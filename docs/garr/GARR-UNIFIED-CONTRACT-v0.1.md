@@ -125,6 +125,39 @@ flowchart TD
 - v0.1 为确定性启发式，不声称具备经过实证校准的 EVC。阈值/代价权重是共享策略版本的一部分；未配置不能各语言自行采用含义不同的默认值。
 - 触发深度、祖先等价 fingerprint、Frame 数量、上下文/节点上限是硬边界；预算不足时不假装任务完成。
 
+### 3.4 `garr-cparp-0.1`：统一确定性参考策略
+
+仅有统一流程图还不够：**同一个 `policy_id` 不允许由各语言自行决定阈值、方向与评分**。v0.1 以下数值为可重复的启发式参考策略，不是已校准概率或最优 EVC。引入新算法、学习式权重或不同拆分策略必须使用新的 `policy_id` 并更新 Golden Fixture。
+
+- 默认上限：`max_graph_depth=2`、`max_nodes=120`、`max_recursion_depth=1`、`max_children=3`、`minimum_split_gain=10`。
+- `precedes` 只在 `implement` 阶段允许正向遍历；其他关系允许正向遍历。允许反向遍历的类型仅 `implements`、`depends_on`、`constrained_by`、`conflicts_with`；`writes` 仅在 `implement` 允许反向；其余禁止反向。
+- 以锚点执行有界搜索后进行**独立的强制硬约束闭包**。证据冲突 `disputed` 优先 `verify`，`proposed/stale` 优先 `probe`。硬约束闭包越界返回 `blocked`，不能截断后声称成功。
+- 以领域 `domain` 为候选分区，`test/rule` 只作为共享只读信息；`implement` 阶段对 `atomic` 相连的领域作确定性收缩。`contractible` 跨分区必须有非空验证器。分区按 UTF-8 字节序排序，大小写敏感，禁止本地化排序改变输出。
+- 分组数量 `k<2` 或 `k>3` 不拆分。子任务必须覆盖全部 Proof Obligations，Join 承担跨帧契约。
+
+~~~text
+n = visited_node_count           // 包含约束闭包中的节点
+k = partition_count              // 合并 Atomic 后的领域数
+x = cross_partition_edge_count   // 每条跨分区边计一次
+c = cross_partition_contractible_constraints_with_validator
+
+direct_score = 25 + 6*n + 85*k + 4*x
+split_score  = 25 + 6*n + 30*k + 26*x + 18*c + 30
+split_gain   = max(0, direct_score - split_score)
+
+required_tokens = 300 + 1800*k + 900 + 700
+required_model_calls = 0 + 2*k + 1 + 1
+required_graph_reads = 2 + 2*k + 1 + 1
+
+if k < 2 or k > 3: direct
+else if invalid hard constraint or missing boundary verifier: probe / blocked
+else if any budget dimension insufficient: direct (or blocked when unsafe)
+else if split_gain < 10: direct
+else: split (and)
+~~~
+
+所有计算采用有检查的无符号整数算术，不允许溢出回绕。跨语言 `full_engine` 宣称相同 `policy_id` 时必须在同一 Task/GraphSnapshot/Budget 输入下对齐统一 Golden Fixture。Rust 当前 P0 仅实现部分预算维度；尚未实现费用/时限等硬门禁的实现不得宣称完整 `full_engine`。端侧 `client_lite` 可不计算该策略，但 MUST 通过同一协议转交完整 Planner，不能自行发明替代算法。
+
 ## 4. 统一预算、权限与完成判据
 
 **预算向量** `BudgetLimits` 包含 `max_tokens`、`max_model_calls`、`max_graph_reads`、`max_cost_microusd`、`deadline_ms`、`max_depth`、`max_children`、`max_parallel_frames`。未实现的维度必须显式上报 `unsupported` 或由可信调度器管控，**不能默认为无限额**。
