@@ -1,12 +1,14 @@
 # AgentScope TYPESCRIPT：GARR 统一规范适配入口
 
+> **TYPESCRIPT 详细技术实现、源码与测试**：[GARR Implementation v0.1](garr/implementation-typescript-v0.1.md)。本入口仅是语言映射，完整公共规则以统一合同为准。
+
 > **language-adapter-only** · 更新于 2026-10-28。**本文件没有独立的 GARR 架构与算法定义。**
 >
 > 跨语言**唯一规范**：**[GARR Unified Contract v0.1](garr/GARR-UNIFIED-CONTRACT-v0.1.md)**。规范唯一编辑源：`partme-docs/docs/standards/garr/GARR-UNIFIED-CONTRACT-v0.1.md`。本仓镜像必须与源文件 SHA-256 完全一致。
 
 ## 1. 当前实现状态
 
-仅有设计文档；GARR TypeScript 代码未实现。
+TypeScript P0 Planner 已实现，并通过 Node24 运行的 9 个统一 Golden Fixture；完整 tsup/pnpm 打包尚未验证。
 
 ## 2. 本仓特定适配（不改变公共语义）
 

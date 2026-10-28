@@ -49,6 +49,21 @@
             "import": "./dist/state/index.mjs",
             "require": "./dist/state/index.js"
         },
+        "./garr": {
+            "types": "./dist/garr/index.d.ts",
+            "import": "./dist/garr/index.mjs",
+            "require": "./dist/garr/index.js"
+        },
+        "./garr/p1": {
+            "types": "./dist/garr/p1.d.ts",
+            "import": "./dist/garr/p1.mjs",
+            "require": "./dist/garr/p1.js"
+        },
+        "./garr/agentscope-adapter": {
+            "types": "./dist/garr/agentscope-adapter.d.ts",
+            "import": "./dist/garr/agentscope-adapter.mjs",
+            "require": "./dist/garr/agentscope-adapter.js"
+        },
         "./permission": {
             "types": "./dist/permission/index.d.ts",
             "import": "./dist/permission/index.mjs",
