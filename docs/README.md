@@ -1,5 +1,7 @@
 # AgentScope Documentation
 
+> **GARR 跨语言唯一规范**：[GARR Unified Contract v0.1](./garr/GARR-UNIFIED-CONTRACT-v0.1.md)；[TypeScript API 适配说明](./garr-implementation-v0.1.md)。当前未实现，不代表 Mintlify 导航已发布该功能。
+
 This directory contains the Mintlify documentation for AgentScope.
 
 ## Development
